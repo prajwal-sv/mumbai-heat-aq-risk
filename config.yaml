@@ -1,0 +1,23 @@
+# Project settings. Values marked TODO are filled in after we check the real data.
+
+city:
+  name: Mumbai
+  country: IN
+  latitude: 19.0760
+  longitude: 72.8777
+
+time:
+  storage_timezone: UTC            # all stored timestamps
+  display_timezone: Asia/Kolkata   # IST, only for what the user sees
+
+random_seed: 42                    # same seed everywhere so results repeat
+
+forecast:
+  target: pm25                     # confirmed in Step 2 after checking the data
+  horizon: next_day_average
+
+stations:
+  openaq_ids: []                   # TODO Step 2: filled after we list Mumbai stations
+
+data_rules:
+  max_gap_hours_to_interpolate: 3  # PROPOSED, we confirm in Step 3 after looking at real gaps

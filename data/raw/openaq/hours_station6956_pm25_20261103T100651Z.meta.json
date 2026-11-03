@@ -1,0 +1,6 @@
+{
+  "source": "OpenAQ v3 sensors/12235896/hours, station 6956, pm25; 1 page(s) merged into one list, rows untouched",
+  "url": "https://api.openaq.org/v3/sensors/12235896/hours?datetime_from=2026-10-04T10%3A00%3A00Z&datetime_to=2026-11-03T10%3A00%3A00Z&limit=1000&page=1",
+  "downloaded_at_utc": "20261103T100651Z",
+  "file": "hours_station6956_pm25_20261103T100651Z.json"
+}
