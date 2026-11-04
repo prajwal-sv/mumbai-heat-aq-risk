@@ -27,3 +27,4 @@ for s in stations:
     first_date = first["utc"] if first else "none"
     last_date = last["utc"] if last else "none"
     print(s["id"], "|", s["name"], "|", first_date, "|", last_date)
+
