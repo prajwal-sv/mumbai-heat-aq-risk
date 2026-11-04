@@ -20,3 +20,16 @@ print("Longest gap between readings:", s.index.to_series().diff().max())
 # Missing readings per day (IST)
 print(pd.Series(1, index=missing).tz_convert("Asia/Kolkata").resample("D").sum())
 
+# Rows: 332 | duplicate times: 0
+# Min: 16.8 | Max: 46.55 | Mean: 29.2
+# Expected: 672 | Missing: 340
+# Longest gap between readings: 3 days 11:45:00
+# 2026-10-21 00:00:00+05:30     1
+# 2026-10-22 00:00:00+05:30     1
+# 2026-10-23 00:00:00+05:30    12
+# 2026-10-24 00:00:00+05:30    96
+# 2026-10-25 00:00:00+05:30    96
+# 2026-10-26 00:00:00+05:30    96
+# 2026-10-27 00:00:00+05:30    36
+# 2026-10-28 00:00:00+05:30     2
+# Freq: D, dtype: int64
