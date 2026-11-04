@@ -1,6 +1,0 @@
-{
-  "source": "OpenAQ v3 /locations, stations within 25 km of Mumbai centre",
-  "url": "https://api.openaq.org/v3/locations?coordinates=19.076%2C72.8777&radius=25000&limit=1000",
-  "downloaded_at_utc": "20261103T094158Z",
-  "file": "locations_20261103T094158Z.json"
-}

@@ -1,6 +1,0 @@
-{
-  "source": "NASA POWER daily point, T2M and RH2M, Jan 2024 sample",
-  "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CRH2M&community=RE&latitude=19.076&longitude=72.8777&start=20240101&end=20240131&format=JSON",
-  "downloaded_at_utc": "20261103T094201Z",
-  "file": "daily_sample_20261103T094201Z.json"
-}
