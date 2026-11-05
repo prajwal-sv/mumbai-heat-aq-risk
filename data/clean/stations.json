@@ -1,0 +1,32 @@
+{
+  "11611": {
+    "name": "Malad West",
+    "lat": 19.19709,
+    "lon": 72.82204
+  },
+  "3409482": {
+    "name": "Bandra Kurla Complex",
+    "lat": 19.065931,
+    "lon": 72.862131
+  },
+  "3409486": {
+    "name": "Kherwadi, Bandra East",
+    "lat": 19.0632143,
+    "lon": 72.8456324
+  },
+  "3409510": {
+    "name": "Byculla",
+    "lat": 18.9767,
+    "lon": 72.838
+  },
+  "3409511": {
+    "name": "Shivaji Nagar",
+    "lat": 19.060498,
+    "lon": 72.923356
+  },
+  "3409514": {
+    "name": "Ghatkopar",
+    "lat": 19.083694,
+    "lon": 72.920967
+  }
+}
