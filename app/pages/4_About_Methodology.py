@@ -21,6 +21,9 @@ st.markdown("""
 - **Not used:** older sensors from 2019 to 2022. They stop in 2022 and the new ones start in February 2025,
   so there is a gap of about two years.
 - **Period:** daily data from 19 Feb 2025 to early Nov 2026, about 20 months.
+
+- **Credit:** data come from OpenAQ and the original station operators (MPCB, BMC, IITM). Each location's licence
+  is set by its operator, and we credit both OpenAQ and the operators.
 """)
 
 st.header("Time and freshness")

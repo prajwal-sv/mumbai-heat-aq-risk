@@ -9,7 +9,10 @@ from dotenv import load_dotenv
 from streamlit_folium import st_folium
 
 load_dotenv()
-KEY = os.getenv("OPENAQ_API_KEY")
+try:
+    KEY = st.secrets["OPENAQ_API_KEY"]
+except Exception:
+    KEY = os.getenv("OPENAQ_API_KEY")
 
 # name: (location id, operator, sensors)
 STATIONS = {
@@ -59,7 +62,11 @@ m = folium.Map(location=[19.076, 72.8777], zoom_start=11)
 
 for name, (location_id, operator, sensors) in STATIONS.items():
     lat, lon = POSITIONS[location_id]
-    item = next((x for x in get_latest(location_id) if sensors.get(x["sensorsId"]) == variable), None)
+    try:
+        latest = get_latest(location_id)
+    except Exception:
+        latest = []
+    item = next((x for x in latest if sensors.get(x["sensorsId"]) == variable), None)
 
     color, text = GRAY, "No recent valid reading"
     if item is not None:

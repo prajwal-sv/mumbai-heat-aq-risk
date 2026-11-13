@@ -6,7 +6,10 @@ from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
 load_dotenv()
-KEY = os.getenv("OPENAQ_API_KEY")
+try:
+    KEY = st.secrets["OPENAQ_API_KEY"]
+except Exception:
+    KEY = os.getenv("OPENAQ_API_KEY")
 
 # station name: (location id, operator, {sensor id: variable})
 STATIONS = {
@@ -42,7 +45,11 @@ def freshness(age_hours):
 st.title("Mumbai air quality and temperature")
 name = st.selectbox("Station", list(STATIONS))
 location_id, operator, sensors = STATIONS[name]
-results = get_latest(location_id)
+try:
+    results = get_latest(location_id)
+except Exception:
+    st.error("OpenAQ did not answer, possibly because of its rate limit. Try again in a minute.")
+    st.stop()
 now = datetime.now(timezone.utc)
 
 for col, variable in zip(st.columns(3), ["pm25", "pm10", "temperature"]):

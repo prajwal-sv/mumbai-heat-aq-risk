@@ -1,14 +1,10 @@
-# V1 packages. Lower bounds only for now.
-# After the first successful install on your machine (end of Step 2),
-# we freeze the exact versions with `pip freeze` so rebuilds match.
-pandas>=2.0
-numpy>=1.26
-plotly>=5.18
-scikit-learn>=1.4
-folium>=0.15
-streamlit>=1.30
-streamlit-folium>=0.18
-requests>=2.31
-python-dotenv>=1.0
-pyyaml>=6.0
-pytest>=8.0
+streamlit
+pandas
+numpy
+plotly
+folium
+streamlit-folium
+scikit-learn
+requests
+python-dotenv
+tzdata

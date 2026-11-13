@@ -7,7 +7,10 @@ from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 
 load_dotenv()
-KEY = os.getenv("OPENAQ_API_KEY")
+try:
+    KEY = st.secrets["OPENAQ_API_KEY"]
+except Exception:
+    KEY = os.getenv("OPENAQ_API_KEY")
 
 # name: (operator, {variable: sensor id})
 STATIONS = {
