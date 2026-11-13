@@ -14,15 +14,11 @@ try:
 except Exception:
     KEY = os.getenv("OPENAQ_API_KEY")
 
-# name: (location id, operator, sensors)
-STATIONS = {
-    "Kherwadi, Bandra East": (3409486, "MPCB", {12238411: "pm25", 12238410: "pm10", 12238414: "temperature"}),
-    "Shivaji Nagar": (3409511, "BMC", {12238576: "pm25", 12238575: "pm10", 12238579: "temperature"}),
-    "Ghatkopar": (3409514, "BMC", {12238603: "pm25", 12238602: "pm10", 12238606: "temperature"}),
-    "Byculla": (3409510, "BMC", {12238567: "pm25", 12238566: "pm10", 12238570: "temperature"}),
-    "Bandra Kurla Complex": (3409482, "MPCB", {12238375: "pm25", 12238374: "pm10", 12238378: "temperature"}),
-    "Malad West": (11611, "IITM", {12236426: "pm25", 12236425: "pm10", 12236429: "temperature"}),
-}
+with open("data/clean/stations_config.json", encoding="utf-8") as f:
+    CONFIG = json.load(f)
+STATIONS = {c["name"]: (c["location_id"], c["operator"], {v: k for k, v in c["sensors"].items()})
+            for c in CONFIG.values()}
+POSITIONS = {c["location_id"]: (c["lat"], c["lon"]) for c in CONFIG.values()}
 LABELS = {"pm25": "PM2.5", "pm10": "PM10", "temperature": "Temperature"}
 UNITS = {"pm25": "µg/m³", "pm10": "µg/m³", "temperature": "°C"}
 
@@ -31,10 +27,6 @@ BANDS = {"pm25": [30, 60, 90, 120, 250], "pm10": [50, 100, 250, 350, 430]}
 NAMES = ["Good", "Satisfactory", "Moderate", "Poor", "Very poor", "Severe"]
 COLORS = ["#2e7d32", "#9ccc65", "#fbc02d", "#fb8c00", "#e53935", "#7b1fa2"]
 GRAY, BLUE = "#9e9e9e", "#1e88e5"
-
-# Station positions come from the file we saved at the start
-with open("data/clean/stations.json", encoding="utf-8") as f:
-    POSITIONS = {int(k): (v["lat"], v["lon"]) for k, v in json.load(f).items()}
 
 @st.cache_data(ttl=300)
 def get_latest(location_id):
@@ -86,7 +78,6 @@ for name, (location_id, operator, sensors) in STATIONS.items():
 
 st_folium(m, height=500, use_container_width=True)
 
-# Legend
 if variable == "temperature":
     st.markdown(f"<span style='color:{BLUE}'>●</span> Valid reading &nbsp; "
                 f"<span style='color:{GRAY}'>●</span> No recent valid reading", unsafe_allow_html=True)
@@ -97,6 +88,7 @@ else:
 
 st.caption("Live or delayed | latest readings, each popup shows its time | Source: OpenAQ")
 st.caption("Each dot is one sensor at one spot. It does not describe the whole neighborhood.")
+st.caption("Gray means no valid reading in the last 48 hours, or that OpenAQ did not answer.")
 if variable != "temperature":
     st.caption("Colors use CPCB's 24-hour category bands on a single latest reading, so they are "
-               "indicative only and not an official AQI. Gray means no valid reading in the last 48 hours.")
+               "indicative only and not an official AQI.")

@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import json
 import streamlit as st
 
 FILE = "models_saved/model_comparison.csv"
@@ -13,6 +14,9 @@ if not os.path.exists(FILE):
     st.stop()
 
 t = pd.read_csv(FILE)
+with open("data/clean/stations_config.json", encoding="utf-8") as f:
+    names = {k: c["name"] for k, c in json.load(f).items()}
+t["station"] = t["station"].map(names)
 mae = t.pivot(index="station", columns="model", values="MAE")
 rmse = t.pivot(index="station", columns="model", values="RMSE")
 

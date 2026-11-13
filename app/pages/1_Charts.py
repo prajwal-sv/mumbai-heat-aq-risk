@@ -1,17 +1,14 @@
+import json
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 
 LABELS = {"pm25": "PM2.5", "pm10": "PM10", "temperature": "Temperature"}
 UNITS = {"pm25": "µg/m³", "pm10": "µg/m³", "temperature": "°C"}
-STATIONS = {
-    "kherwadi": ("Kherwadi, Bandra East", "MPCB"),
-    "shivaji_nagar": ("Shivaji Nagar", "BMC"),
-    "ghatkopar": ("Ghatkopar", "BMC"),
-    "byculla": ("Byculla", "BMC"),
-    "bkc_mpcb": ("Bandra Kurla Complex", "MPCB"),
-    "malad_west_iitm": ("Malad West", "IITM"),
-}
+
+with open("data/clean/stations_config.json", encoding="utf-8") as f:
+    CONFIG = json.load(f)
+STATIONS = {key: (c["name"], c["operator"]) for key, c in CONFIG.items()}
 
 def season(month):   # my own grouping, not an official definition
     if month in (12, 1, 2):
@@ -30,10 +27,15 @@ df = load()
 st.title("Charts")
 
 variable = st.selectbox("Variable", list(LABELS), format_func=lambda v: LABELS[v])
-station = st.selectbox("Station", list(STATIONS), format_func=lambda s: STATIONS[s][0])
+station = st.selectbox("Station", sorted(STATIONS, key=lambda k: STATIONS[k][0]),
+                       format_func=lambda s: STATIONS[s][0])
 view = st.radio("View", ["Daily", "Weekly average", "Monthly average", "By season"], horizontal=True)
 
 rows = df[(df["variable"] == variable) & (df["station"] == station)]
+if rows.empty:
+    st.warning("This station has no data for this variable.")
+    st.stop()
+
 daily = rows.set_index("date_ist")["clean_value"]
 daily = daily.reindex(pd.date_range(daily.index.min(), daily.index.max()))   # every day, gaps stay empty
 
@@ -48,8 +50,7 @@ elif view == "Weekly average":
 elif view == "Monthly average":
     data = daily.resample("MS").mean()
 else:
-    by_season = daily.groupby(daily.index.month.map(season)).mean()
-    data = by_season
+    data = daily.groupby(daily.index.month.map(season)).mean()
 
 if view == "By season":
     fig = px.bar(x=data.index, y=data.values, labels={"x": "Season", "y": UNITS[variable]})

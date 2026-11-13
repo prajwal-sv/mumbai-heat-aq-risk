@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -7,9 +8,11 @@ def load():
     return pd.read_csv("data/clean/daily_clean_final.csv", parse_dates=["date_ist"])
 
 df = load()
+with open("data/clean/stations_config.json", encoding="utf-8") as f:
+    names = {k: c["name"] for k, c in json.load(f).items()}
+df["station"] = df["station"].map(names)
 st.title("Data quality")
 
-# One row per station and variable
 s = df.groupby(["station", "variable"]).agg(
     first=("date_ist", "min"),
     last=("date_ist", "max"),

@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 import pandas as pd
@@ -12,15 +13,9 @@ try:
 except Exception:
     KEY = os.getenv("OPENAQ_API_KEY")
 
-# name: (operator, {variable: sensor id})
-STATIONS = {
-    "Kherwadi, Bandra East": ("MPCB", {"pm25": 12238411, "pm10": 12238410, "temperature": 12238414}),
-    "Shivaji Nagar": ("BMC", {"pm25": 12238576, "pm10": 12238575, "temperature": 12238579}),
-    "Ghatkopar": ("BMC", {"pm25": 12238603, "pm10": 12238602, "temperature": 12238606}),
-    "Byculla": ("BMC", {"pm25": 12238567, "pm10": 12238566, "temperature": 12238570}),
-    "Bandra Kurla Complex": ("MPCB", {"pm25": 12238375, "pm10": 12238374, "temperature": 12238378}),
-    "Malad West": ("IITM", {"pm25": 12236426, "pm10": 12236425, "temperature": 12236429}),
-}
+with open("data/clean/stations_config.json", encoding="utf-8") as f:
+    CONFIG = json.load(f)
+STATIONS = {c["name"]: (c["operator"], c["sensors"]) for c in CONFIG.values()}
 LABELS = {"pm25": "PM2.5", "pm10": "PM10", "temperature": "Temperature"}
 UNITS = {"pm25": "µg/m³", "pm10": "µg/m³", "temperature": "°C"}
 
@@ -41,19 +36,27 @@ def is_valid(variable, value):
     return 0 < value <= 1000
 
 st.title("Last 48 hours")
-name = st.selectbox("Station", list(STATIONS))
+name = st.selectbox("Station", sorted(STATIONS))
 variable = st.selectbox("Variable", list(LABELS), format_func=lambda v: LABELS[v])
 operator, sensors = STATIONS[name]
+if variable not in sensors:
+    st.warning("This station has no sensor for this variable.")
+    st.stop()
 
-rows = get_readings(sensors[variable])
+try:
+    rows = get_readings(sensors[variable])
+except Exception:
+    st.error("OpenAQ did not answer, possibly because of its rate limit. Try again in a minute.")
+    st.stop()
 if not rows:
     st.warning("No readings in the last 48 hours for this station and variable.")
     st.stop()
 
 s = pd.Series([v for _, v in rows], index=pd.to_datetime([t for t, _ in rows], utc=True)).sort_index()
 s.index = s.index.tz_convert("Asia/Kolkata")
-bad = int((~s.apply(lambda v: is_valid(variable, v))).sum())
-s = s[s.apply(lambda v: is_valid(variable, v))]
+ok = s.apply(lambda v: is_valid(variable, v))
+bad = int((~ok).sum())
+s = s[ok]
 if s.empty:
     st.warning("No valid readings in the last 48 hours for this station and variable.")
     st.stop()

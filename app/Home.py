@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 import streamlit as st
@@ -11,15 +12,10 @@ try:
 except Exception:
     KEY = os.getenv("OPENAQ_API_KEY")
 
-# station name: (location id, operator, {sensor id: variable})
-STATIONS = {
-    "Kherwadi, Bandra East": (3409486, "MPCB", {12238411: "pm25", 12238410: "pm10", 12238414: "temperature"}),
-    "Shivaji Nagar": (3409511, "BMC", {12238576: "pm25", 12238575: "pm10", 12238579: "temperature"}),
-    "Ghatkopar": (3409514, "BMC", {12238603: "pm25", 12238602: "pm10", 12238606: "temperature"}),
-    "Byculla": (3409510, "BMC", {12238567: "pm25", 12238566: "pm10", 12238570: "temperature"}),
-    "Bandra Kurla Complex": (3409482, "MPCB", {12238375: "pm25", 12238374: "pm10", 12238378: "temperature"}),
-    "Malad West": (11611, "IITM", {12236426: "pm25", 12236425: "pm10", 12236429: "temperature"}),
-}
+with open("data/clean/stations_config.json", encoding="utf-8") as f:
+    CONFIG = json.load(f)
+STATIONS = {c["name"]: (c["location_id"], c["operator"], {v: k for k, v in c["sensors"].items()})
+            for c in CONFIG.values()}
 LABELS = {"pm25": "PM2.5", "pm10": "PM10", "temperature": "Temperature"}
 UNITS = {"pm25": "µg/m³", "pm10": "µg/m³", "temperature": "°C"}
 
@@ -43,7 +39,7 @@ def freshness(age_hours):
     return "Historical"
 
 st.title("Mumbai air quality and temperature")
-name = st.selectbox("Station", list(STATIONS))
+name = st.selectbox("Station", sorted(STATIONS))
 location_id, operator, sensors = STATIONS[name]
 try:
     results = get_latest(location_id)

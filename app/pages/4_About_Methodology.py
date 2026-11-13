@@ -14,16 +14,17 @@ st.markdown("""
 - **OpenAQ (API v3):** latest readings and daily summaries. OpenAQ collects the data from station operators:
   MPCB, BMC and IITM for the six stations used here. Free tier: 60 requests per minute.
 - **Not used yet:** NASA POWER (weather, delayed 2 to 7 days), CPCB, IMD and Open-Meteo.
-- **Data licences:** still to be checked before this project is published. They are not stated here.
-- **Stations used:** Kherwadi (MPCB), Shivaji Nagar (BMC), Ghatkopar (BMC), Byculla (BMC),
-  Bandra Kurla Complex (MPCB) and Malad West (IITM). We started from 44 stations near Mumbai and kept
-  these six because their PM2.5 data was among the most complete.
+
 - **Not used:** older sensors from 2019 to 2022. They stop in 2022 and the new ones start in February 2025,
   so there is a gap of about two years.
 - **Period:** daily data from 19 Feb 2025 to early Nov 2026, about 20 months.
 
-- **Credit:** data come from OpenAQ and the original station operators (MPCB, BMC, IITM). Each location's licence
-  is set by its operator, and we credit both OpenAQ and the operators.
+- **Credit:** data come from OpenAQ and the original providers and operators (CPCB, MPCB, BMC, IITM). OpenAQ
+  says it only ingests openly licensed data and asks users to credit both OpenAQ and the original source. We have not
+  yet read each provider's own terms.
+- **Stations used:** 23 Mumbai stations that were still reporting in the last 7 days and have PM2.5 and PM10 sensors.
+  Navi Mumbai, Thane, Mira-Bhayandar and stations that stopped reporting were left out.
+- **Period:** daily data from 19 Feb 2025 to 12 Nov 2026, about 21 months.
 """)
 
 st.header("Time and freshness")
@@ -54,10 +55,9 @@ st.caption("Read live from the cleaned data file.")
 
 st.markdown("""
 **Problems we found:**
-- Malad West's temperature sensor reports exactly 0.0, so all its temperature data is excluded.
-- Shivaji Nagar's PM sensors reported zeros for 13 days in a row in April and May 2025.
-- Bandra Kurla Complex (MPCB) reported impossible PM values in late 2025 and spring 2026.
-
+- Many temperature sensors report stuck or impossible values. Four stations have no clean temperature days at all.
+- Several stations have PM readings that are zero or far above their neighbors. These days are blanked.
+- No station has a clean PM2.5 value on 3 and 4 Nov 2026. We do not know why.
 **Not explained, and left in the data:**
 - Shivaji Nagar's November 2025 PM2.5 is much higher than at the other stations. It may be real or a sensor problem.
 - Ghatkopar's temperature runs about 4 °C warmer than Byculla's. We did not adjust it.
@@ -79,7 +79,9 @@ st.markdown("""
 - **Split by time:** trained on days up to 29 June 2026, tested from 1 July 2026. No random splits.
 - **Avoiding data leakage:** a forecast uses only data up to its own day. Gaps are not filled, because filling would use
   values from after the gap. All forecasts are scored on exactly the same test days.
-- **Result:** no model beat the baseline. See the Forecast page for the table.
+- **Result:** pooled over 23 stations, the baseline had the lowest average error and Linear Regression a slightly lower
+  RMSE. At 5 of 23 stations Linear Regression beat the baseline on both numbers, by small margins. We show no forecast.
+  See the Forecast page.
 """)
 
 st.header("Limitations")
